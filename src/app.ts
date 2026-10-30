@@ -10,11 +10,11 @@ export class App {
     constructor() {
         this.app = express();
         this.errorMiddleware = new ErrorMiddleware();
+        this.requestIdMiddleware = new RequestIdMiddleware();
 
         this.configureMiddleware();
         this.configureRoutes();
         this.configureErrorHandling();
-        this.requestIdMiddleware = new RequestIdMiddleware();
     }
 
     private configureMiddleware(): void {

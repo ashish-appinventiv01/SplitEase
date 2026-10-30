@@ -1,6 +1,7 @@
 import { type Express } from 'express';
 import { AppError } from './common/errors';
 import { ApiResponse } from './common/responses';
+import { ErrorCode } from './enum/enum';
 
 export function registerRoutes(app: Express): void {
     app.get('/', (req, res) => {
@@ -11,7 +12,7 @@ export function registerRoutes(app: Express): void {
         res.send('OK');
     });
     app.get("/test-error", (_req, _res, next) => {
-        next(new AppError("This is a test error", 400));
+        next(new AppError("This is a test error", 400, ErrorCode.VALIDATION_ERROR));
     });
     app.get("/test-created", (_req, res) => {
         const user = {

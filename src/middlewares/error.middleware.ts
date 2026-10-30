@@ -7,6 +7,7 @@ import type {
 import { AppError } from "../common/errors";
 import { ErrorCode } from "../enum/enum";
 import { ErrorMessage } from "../common/constant";
+import { Logger } from "../logger/logger";
 
 export class ErrorMiddleware {
     public handle(
@@ -23,10 +24,14 @@ export class ErrorMiddleware {
             ? error.code
             : ErrorCode.INTERNAL_SERVER_ERROR;
 
-        const message = ErrorMessage[code];
+        const message = isAppError ? error.message : ErrorMessage[code];
 
-        if (statusCode === 500) {
-            console.error(error);
+        const logMessage = `${code} ${statusCode} requestId=${_req.requestId ?? "none"}: ${error.message}`;
+
+        if (statusCode >= 500) {
+            Logger.error(logMessage, { stack: error.stack });
+        } else {
+            Logger.warn(logMessage, { stack: error.stack });
         }
 
         res.status(statusCode).json({
