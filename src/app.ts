@@ -2,11 +2,11 @@
 import express, { type Express } from "express";
 import { registerRoutes } from "./app.routes";
 import { ErrorMiddleware } from "./middlewares/error.middleware";
-
+import { RequestIdMiddleware } from "./middlewares/request-id.middleware";
 export class App {
     public readonly app: Express;
     private readonly errorMiddleware: ErrorMiddleware;
-
+    private readonly requestIdMiddleware: RequestIdMiddleware;
     constructor() {
         this.app = express();
         this.errorMiddleware = new ErrorMiddleware();
@@ -14,9 +14,11 @@ export class App {
         this.configureMiddleware();
         this.configureRoutes();
         this.configureErrorHandling();
+        this.requestIdMiddleware = new RequestIdMiddleware();
     }
 
     private configureMiddleware(): void {
+        this.app.use(this.requestIdMiddleware.handle);
         this.app.use(express.json());
     }
 

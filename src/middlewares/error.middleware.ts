@@ -1,30 +1,38 @@
+import type {
+    NextFunction,
+    Request,
+    Response,
+} from "express";
 
-import type { NextFunction, Request, Response } from "express";
-import { ApiError } from "../common/errors";
+import { AppError } from "../common/errors";
+import { ErrorCode } from "../enum/enum";
+import { ErrorMessage } from "../common/constant";
 
 export class ErrorMiddleware {
-    
-  public handle(
-    error: Error,
-    _req: Request,
-    res: Response,
-    _next: NextFunction
-  ): void {
-    const statusCode =
-      error instanceof ApiError ? error.statusCode : 500;
+    public handle(
+        error: Error,
+        _req: Request,
+        res: Response,
+        _next: NextFunction
+    ): void {
+        const isAppError = error instanceof AppError;
 
-    const message =
-      error instanceof ApiError
-        ? error.message
-        : "Internal server error";
+        const statusCode = isAppError ? error.statusCode : 500;
 
-    if (statusCode === 500) {
-      console.error(error);
+        const code = isAppError
+            ? error.code
+            : ErrorCode.INTERNAL_SERVER_ERROR;
+
+        const message = ErrorMessage[code];
+
+        if (statusCode === 500) {
+            console.error(error);
+        }
+
+        res.status(statusCode).json({
+            statusCode,
+            code,
+            message,
+        });
     }
-
-    res.status(statusCode).json({
-      success: false,
-      message
-    });
-  }
 }

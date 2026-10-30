@@ -1,4 +1,3 @@
-
 import type { Response } from "express";
 
 export class ApiResponse {
@@ -9,9 +8,9 @@ export class ApiResponse {
     statusCode: number = 200
   ): Response {
     return res.status(statusCode).json({
-      success: true,
+      statusCode,
       message,
-      ...(data !== undefined && { data })
+      ...(data !== undefined && { data }),
     });
   }
 
