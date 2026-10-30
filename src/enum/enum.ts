@@ -8,7 +8,7 @@ export enum DeviceType {
   export enum SplitType {
     EQUAL = "EQUAL",
     EXACT = "EXACT",
-    PERCENTAGE = "PERCENTAGE"
+    PERCENT = "PERCENT",
   }
   
   export enum ExportStatus {

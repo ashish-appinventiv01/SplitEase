@@ -10,7 +10,9 @@ class Server {
     this.application = new App();
   }
 
-  public start(): void {
+  public async start(): Promise<void> {
+    await this.application.initialize();
+
     this.application.app.listen(configuration.PORT, () => {
       console.log(
         `SplitEase API running on http://localhost:${configuration.PORT}`
@@ -20,4 +22,6 @@ class Server {
 }
 
 const server = new Server();
-server.start();
+server.start().catch(() => {
+  process.exit(1);
+});
