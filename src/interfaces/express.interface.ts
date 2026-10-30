@@ -6,6 +6,8 @@ declare global {
     interface Request {
       user?: AuthenticatedUser;
       requestId?: string;
+      validatedQuery?: Record<string, unknown>;
+      validatedParams?: Record<string, unknown>;
     }
   }
 }
