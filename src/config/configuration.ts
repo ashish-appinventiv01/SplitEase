@@ -12,6 +12,7 @@ const environmentSchema = z.object({
 
   JWT_ACCESS_SECRET: z.string(),
   JWT_REFRESH_SECRET: z.string(),
+  REDIS_URL: z.string().url().default("redis://127.0.0.1:6379"),
 });
 
 export class Configuration {
@@ -49,6 +50,9 @@ export class Configuration {
 
   public get PORT(): number {
     return this.result.PORT;
+  }
+  public get redisUrl(): string {
+    return this.result.REDIS_URL;
   }
 }
 
