@@ -5,17 +5,17 @@ import type { Server as HttpServer } from "http";
 import { App } from "./app";
 import { configuration } from "./config/configuration";
 import { Logger } from "./logger/logger";
-
+import { RedisProvider } from "./providers/redis/redis.provider";
 const SHUTDOWN_SIGNALS = ["SIGINT", "SIGTERM"] as const;
 
 class Server {
   private readonly application = new App();
   private httpServer?: HttpServer;
   private isShuttingDown = false;
-
+  private readonly redisProvider = RedisProvider.getInstance();
   public async start(): Promise<void> {
     await this.application.initialize();
-
+    await this.redisProvider.connect();
     this.httpServer = this.application.app.listen(configuration.PORT, () => {
       Logger.info(
         `SplitEase API running on http://localhost:${configuration.PORT}`
@@ -38,6 +38,7 @@ class Server {
     try {
       await this.closeHttpServer();
       await this.application.disconnect();
+      await this.redisProvider.disconnect();
       Logger.info("Graceful shutdown completed");
       process.exit(0);
     } catch (error) {
