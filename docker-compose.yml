@@ -1,0 +1,90 @@
+
+services:
+  # =====================================
+  # SplitEase API
+  # =====================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: splitease-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # =====================================
+  # MongoDB
+  # =====================================
+  mongo:
+    image: mongo:8
+    container_name: splitease-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - db.adminCommand('ping').ok
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =====================================
+  # Redis
+  # =====================================
+  redis:
+    image: redis:7-alpine
+    container_name: splitease-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =====================================
+  # RabbitMQ
+  # =====================================
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: splitease-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: splitease
+      RABBITMQ_DEFAULT_PASS: splitease_dev_password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# =====================================
+# Persistent Volumes
+# =====================================
+volumes:
+  mongo_data:
+  redis_data:
+  rabbitmq_data:
