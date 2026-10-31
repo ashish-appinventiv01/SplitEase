@@ -27,6 +27,10 @@ export class App {
         return this.database.connect();
     }
 
+    public disconnect(): Promise<void> {
+        return this.database.disconnect();
+    }
+
     private configureMiddleware(): void {
         this.app.use(this.requestIdMiddleware.handle);
         this.app.use(express.json());
