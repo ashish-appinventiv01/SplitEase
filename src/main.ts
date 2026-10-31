@@ -6,6 +6,7 @@ import { App } from "./app";
 import { configuration } from "./config/configuration";
 import { Logger } from "./logger/logger";
 import { RedisProvider } from "./providers/redis/redis.provider";
+import { RabbitMQProvider } from "./providers/rabbitmq/rabbitmq.provider";
 const SHUTDOWN_SIGNALS = ["SIGINT", "SIGTERM"] as const;
 
 class Server {
@@ -13,9 +14,11 @@ class Server {
   private httpServer?: HttpServer;
   private isShuttingDown = false;
   private readonly redisProvider = RedisProvider.getInstance();
+  private readonly rabbitmqProvider = RabbitMQProvider.getInstance();
   public async start(): Promise<void> {
     await this.application.initialize();
     await this.redisProvider.connect();
+    await this.rabbitmqProvider.connect();
     this.httpServer = this.application.app.listen(configuration.PORT, () => {
       Logger.info(
         `SplitEase API running on http://localhost:${configuration.PORT}`
@@ -39,6 +42,7 @@ class Server {
       await this.closeHttpServer();
       await this.application.disconnect();
       await this.redisProvider.disconnect();
+      await this.rabbitmqProvider.disconnect();
       Logger.info("Graceful shutdown completed");
       process.exit(0);
     } catch (error) {

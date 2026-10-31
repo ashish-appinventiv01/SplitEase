@@ -13,6 +13,10 @@ const environmentSchema = z.object({
   JWT_ACCESS_SECRET: z.string(),
   JWT_REFRESH_SECRET: z.string(),
   REDIS_URL: z.string().url().default("redis://127.0.0.1:6379"),
+  RABBITMQ_URL: z
+  .string()
+  .url()
+  .default("amqp://guest:guest@127.0.0.1:5672"),
 });
 
 export class Configuration {
@@ -53,6 +57,9 @@ export class Configuration {
   }
   public get redisUrl(): string {
     return this.result.REDIS_URL;
+  }
+  public get rabbitmqUrl(): string {
+    return this.result.RABBITMQ_URL;
   }
 }
 
