@@ -1,6 +1,7 @@
 import mongoose, { Schema, type Model } from "mongoose";
 
 export interface IUser {
+  _id: string;
   name: string;
   email: string;
   passwordHash: string;

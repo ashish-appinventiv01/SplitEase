@@ -6,7 +6,7 @@ import { ErrorCode } from "../enum/enum";
 type Source = "body" | "query" | "params";
 
 export class ValidateMiddleware {
-  private validate(schema: ZodType, source: Source) {
+  public static validate(schema: ZodType, source: Source) {
     return (req: Request, _res: Response, next: NextFunction): void => {
       const result = schema.safeParse(req[source]);
 
@@ -25,15 +25,15 @@ export class ValidateMiddleware {
     };
   }
 
-  public validateBody(schema: ZodType) {
+  public static validateBody(schema: ZodType) {
     return this.validate(schema, "body");
   }
 
-  public validateQuery(schema: ZodType) {
+  public static validateQuery(schema: ZodType) {
     return this.validate(schema, "query");
   }
 
-  public validateParams(schema: ZodType) {
+  public static validateParams(schema: ZodType) {
     return this.validate(schema, "params");
   }
 }

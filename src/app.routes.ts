@@ -3,6 +3,8 @@ import { AppError } from './common/errors';
 import { ApiResponse } from './common/responses';
 import { ErrorCode } from './enum/enum';
 import { APP_CONSTANTS } from './common/constant';
+import { AuthRoutes } from './modules/v1/auth/auth.routes';
+
 export function registerRoutes(app: Express): void {
     app.get('/', (req, res) => {
         res.send('Hello World');
@@ -31,4 +33,5 @@ export function registerRoutes(app: Express): void {
             user
         );
     });
+    app.use(`${APP_CONSTANTS.API_PREFIX}/auth`,new AuthRoutes().router);
 }

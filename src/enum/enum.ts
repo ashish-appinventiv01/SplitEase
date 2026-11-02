@@ -27,6 +27,7 @@ export enum DeviceType {
 
   export enum ErrorCode {
     VALIDATION_ERROR = "VALIDATION_ERROR",
+    CONFLICT = "CONFLICT",
   
     DEVICE_ID_REQUIRED = "DEVICE_ID_REQUIRED",
     DEVICE_TYPE_REQUIRED = "DEVICE_TYPE_REQUIRED",

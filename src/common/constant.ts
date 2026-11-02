@@ -17,6 +17,7 @@ export const APP_CONSTANTS = {
   } as const;
   
   export const ErrorMessage: Record<ErrorCode, string> = {
+    [ErrorCode.CONFLICT]: "An account with this email already exists.",
     [ErrorCode.VALIDATION_ERROR]: "The request data is invalid.",
     [ErrorCode.DEVICE_ID_REQUIRED]: "Device id is required.",
     [ErrorCode.DEVICE_TYPE_REQUIRED]: "Device type is required.",

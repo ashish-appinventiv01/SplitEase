@@ -39,14 +39,27 @@ export class SessionRepository {
       .exec();
   }
 
-  public async updateRefreshToken(
+  /**
+   * Replace the refresh-token id only if the session still holds the expected one.
+   * A concurrent rotation updates zero documents and returns null.
+   */
+  public async rotateRefreshToken(
     sessionId: string,
-    refreshTokenId: string
+    expectedRefreshTokenId: string,
+    nextRefreshTokenId: string
   ): Promise<ISession | null> {
+    if (!mongoose.Types.ObjectId.isValid(sessionId)) {
+      return null;
+    }
+
     return this.sessionModel
-      .findByIdAndUpdate(
-        sessionId,
-        { refreshTokenId },
+      .findOneAndUpdate(
+        {
+          _id: sessionId,
+          refreshTokenId: expectedRefreshTokenId,
+          isRevoked: false,
+        },
+        { $set: { refreshTokenId: nextRefreshTokenId } },
         { new: true, runValidators: true }
       )
       .lean<ISession>()
@@ -70,5 +83,19 @@ export class SessionRepository {
       { userId, deviceId, isRevoked: false },
       { $set: { isRevoked: true } }
     );
+  }
+
+  public async findActiveSessionsByUserAndDevice(
+    userId: string,
+    deviceId: string
+  ): Promise<ISession[]> {
+    return this.sessionModel.find({
+      userId,
+      deviceId,
+      isRevoked: false,
+      expiresAt: { $gt: new Date() },
+    })
+      .lean<ISession[]>()
+      .exec();
   }
 }

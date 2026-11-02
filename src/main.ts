@@ -23,6 +23,11 @@ class Server {
       Logger.info(
         `SplitEase API running on http://localhost:${configuration.PORT}`
       );
+      if (configuration.NodeEnv !== "production") {
+        Logger.info(
+          `Swagger UI available at http://localhost:${configuration.PORT}/api-docs`
+        );
+      }
     });
 
     for (const signal of SHUTDOWN_SIGNALS) {

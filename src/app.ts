@@ -5,6 +5,7 @@ import { ErrorMiddleware } from "./middlewares/error.middleware";
 import { RequestIdMiddleware } from "./middlewares/request-id.middleware";
 import { HeaderValidator } from "./middlewares/header.validator";
 import { DatabaseProvider } from "./providers/database/database.provider";
+import { setupSwagger } from "./docs/swagger";
 export class App {
     public readonly app: Express;
     private readonly errorMiddleware: ErrorMiddleware;
@@ -34,6 +35,7 @@ export class App {
     private configureMiddleware(): void {
         this.app.use(this.requestIdMiddleware.handle);
         this.app.use(express.json());
+        setupSwagger(this.app);
         this.app.use(this.headerValidator.validate);
     }
 
