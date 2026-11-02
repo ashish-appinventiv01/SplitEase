@@ -37,6 +37,10 @@ export const openApiDocument = {
       name: "Auth",
       description: "Sign up, sign in, refresh tokens, and log out",
     },
+    {
+      name: "Users",
+      description: "Profile and account management for the signed-in user",
+    },
   ],
   paths: {
     "/": {
@@ -324,6 +328,198 @@ export const openApiDocument = {
         },
       },
     },
+    [`${APP_CONSTANTS.API_PREFIX}/users/profile`]: {
+      get: {
+        tags: ["Users"],
+        summary: "Get the current user's profile",
+        security: [{ bearerAuth: [] }],
+        parameters: deviceParameters,
+        responses: {
+          "200": {
+            description: "Profile fetched",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/UserProfileResponse" },
+                example: {
+                  statusCode: 200,
+                  message: "Profile fetched successfully",
+                  data: {
+                    id: "674a1c2e8f0b9a0012345678",
+                    name: "Rahul",
+                    email: "rahul@example.com",
+                    isEmailVerified: false,
+                    createdAt: "2026-11-02T08:00:00.000Z",
+                    updatedAt: "2026-11-02T08:00:00.000Z",
+                  },
+                },
+              },
+            },
+          },
+          "400": errorResponse,
+          "401": {
+            description: "Access token is missing, invalid, or the session is inactive",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+                example: {
+                  statusCode: 401,
+                  code: "UNAUTHORIZED",
+                  message: "Access token is required",
+                },
+              },
+            },
+          },
+          "404": {
+            description: "User does not exist or the account is inactive",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+                example: {
+                  statusCode: 404,
+                  code: "NOT_FOUND",
+                  message: "User not found",
+                },
+              },
+            },
+          },
+        },
+      },
+      patch: {
+        tags: ["Users"],
+        summary: "Update the current user's profile",
+        description: "Updates the signed-in user's name. A name is required.",
+        security: [{ bearerAuth: [] }],
+        parameters: deviceParameters,
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/UpdateUserRequest" },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Profile updated",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/UserProfileResponse" },
+                example: {
+                  statusCode: 200,
+                  message: "Profile updated successfully",
+                  data: {
+                    id: "674a1c2e8f0b9a0012345678",
+                    name: "Rahul Sharma",
+                    email: "rahul@example.com",
+                    isEmailVerified: false,
+                    createdAt: "2026-11-02T08:00:00.000Z",
+                    updatedAt: "2026-11-02T09:30:00.000Z",
+                  },
+                },
+              },
+            },
+          },
+          "400": {
+            description: "Name is missing or does not meet the length rules",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+                examples: {
+                  missing: {
+                    summary: "Name omitted",
+                    value: {
+                      statusCode: 400,
+                      code: "VALIDATION_ERROR",
+                      message: "At least one field is required",
+                    },
+                  },
+                  invalid: {
+                    summary: "Name length",
+                    value: {
+                      statusCode: 400,
+                      code: "VALIDATION_ERROR",
+                      message: "Name must contain at least 2 characters",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "401": {
+            description: "Access token is missing, invalid, or the session is inactive",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+                example: {
+                  statusCode: 401,
+                  code: "UNAUTHORIZED",
+                  message: "Access token is required",
+                },
+              },
+            },
+          },
+          "404": {
+            description: "User does not exist",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+                example: {
+                  statusCode: 404,
+                  code: "NOT_FOUND",
+                  message: "User not found",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    [`${APP_CONSTANTS.API_PREFIX}/users/account`]: {
+      delete: {
+        tags: ["Users"],
+        summary: "Deactivate the current user's account",
+        description: "Marks the signed-in user's account as inactive.",
+        security: [{ bearerAuth: [] }],
+        parameters: deviceParameters,
+        responses: {
+          "200": {
+            description: "Account deactivated",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/DeactivateAccountResponse" },
+              },
+            },
+          },
+          "400": errorResponse,
+          "401": {
+            description: "Access token is missing, invalid, or the session is inactive",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+                example: {
+                  statusCode: 401,
+                  code: "UNAUTHORIZED",
+                  message: "Access token is required",
+                },
+              },
+            },
+          },
+          "404": {
+            description: "Account could not be deactivated",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ErrorResponse" },
+                example: {
+                  statusCode: 404,
+                  code: "NOT_FOUND",
+                  message: "Unable to deactivate account",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     "/test-error": {
       get: {
         tags: ["General"],
@@ -528,6 +724,55 @@ export const openApiDocument = {
           statusCode: { type: "integer", example: 201 },
           message: { type: "string", example: "Account created successfully" },
           data: { $ref: "#/components/schemas/AuthPayload" },
+        },
+      },
+      UpdateUserRequest: {
+        type: "object",
+        required: ["name"],
+        properties: {
+          name: {
+            type: "string",
+            minLength: 2,
+            maxLength: 100,
+            example: "Rahul Sharma",
+          },
+        },
+      },
+      UserProfile: {
+        type: "object",
+        required: [
+          "id",
+          "name",
+          "email",
+          "isEmailVerified",
+          "createdAt",
+          "updatedAt",
+        ],
+        properties: {
+          id: { type: "string", example: "674a1c2e8f0b9a0012345678" },
+          name: { type: "string", example: "Rahul" },
+          email: { type: "string", format: "email", example: "rahul@example.com" },
+          isEmailVerified: { type: "boolean", example: false },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+        },
+      },
+      UserProfileResponse: {
+        type: "object",
+        required: ["statusCode", "message", "data"],
+        properties: {
+          statusCode: { type: "integer", example: 200 },
+          message: { type: "string", example: "Profile fetched successfully" },
+          data: { $ref: "#/components/schemas/UserProfile" },
+        },
+      },
+      DeactivateAccountResponse: {
+        type: "object",
+        required: ["statusCode", "message", "data"],
+        properties: {
+          statusCode: { type: "integer", example: 200 },
+          message: { type: "string", example: "Account deactivated successfully" },
+          data: { nullable: true, example: null },
         },
       },
       LogoutResponse: {

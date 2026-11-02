@@ -16,6 +16,38 @@ export class UserRepository {
       .lean<IUser>()
       .exec();
   }
+  public async updateById(
+    userId: string,
+    updateData: Partial<IUser>
+  ): Promise<IUser | null> {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return null;
+    }
+  
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+      .lean<IUser>()
+      .exec();
+  }
+  
+  public async deactivateById(userId: string): Promise<boolean> {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return false;
+    }
+  
+    const result = await this.userModel.updateOne(
+      { _id: userId },
+      { $set: { isActive: false } }
+    ).exec();
+  
+    return result.modifiedCount > 0;
+  }
 
   public async findById(
     userId: string

@@ -98,4 +98,27 @@ export class SessionRepository {
       .lean<ISession[]>()
       .exec();
   }
+
+  public async findActiveSessionsByUser(
+    userId: string
+  ): Promise<ISession[]> {
+    return this.sessionModel.find({
+      userId,
+      isRevoked: false,
+    })
+      .lean<ISession[]>()
+      .exec();
+  }
+
+  public async revokeAllByUser(userId: string): Promise<void> {
+    await this.sessionModel.updateMany(
+      {
+        userId,
+        isRevoked: false,
+      },
+      {
+        $set: { isRevoked: true },
+      }
+    ).exec();
+  }
 }

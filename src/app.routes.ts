@@ -4,6 +4,7 @@ import { ApiResponse } from './common/responses';
 import { ErrorCode } from './enum/enum';
 import { APP_CONSTANTS } from './common/constant';
 import { AuthRoutes } from './modules/v1/auth/auth.routes';
+import { UserRoutes } from './modules/v1/user/user.routes';
 
 export function registerRoutes(app: Express): void {
     app.get('/', (req, res) => {
@@ -34,4 +35,9 @@ export function registerRoutes(app: Express): void {
         );
     });
     app.use(`${APP_CONSTANTS.API_PREFIX}/auth`,new AuthRoutes().router);
+
+    app.use(
+        `${APP_CONSTANTS.API_PREFIX}/users`,
+        new UserRoutes().router
+      );
 }

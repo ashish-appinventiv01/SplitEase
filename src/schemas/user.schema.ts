@@ -7,8 +7,8 @@ export interface IUser {
   passwordHash: string;
   isEmailVerified: boolean;
   isActive: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class UserSchema {
