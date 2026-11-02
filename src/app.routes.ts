@@ -5,7 +5,7 @@ import { ErrorCode } from './enum/enum';
 import { APP_CONSTANTS } from './common/constant';
 import { AuthRoutes } from './modules/v1/auth/auth.routes';
 import { UserRoutes } from './modules/v1/user/user.routes';
-
+import { GroupRoutes } from "./modules/v1/group/group.routes";
 export function registerRoutes(app: Express): void {
     app.get('/', (req, res) => {
         res.send('Hello World');
@@ -40,4 +40,5 @@ export function registerRoutes(app: Express): void {
         `${APP_CONSTANTS.API_PREFIX}/users`,
         new UserRoutes().router
       );
+      app.use(`${APP_CONSTANTS.API_PREFIX}/groups`, new GroupRoutes().router);
 }
