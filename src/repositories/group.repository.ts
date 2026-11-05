@@ -74,5 +74,22 @@ export class GroupRepository {
       .lean<IGroup>()
       .exec();
   }
+
+  public async findByIdWithMembers(groupId: string) {
+    if (!mongoose.Types.ObjectId.isValid(groupId)) {
+      return null;
+    }
+  
+    return GroupModel.findOne({
+      _id: groupId,
+      isActive: true,
+    })
+      .populate({
+        path: "members.userId",
+        select: "name email isActive",
+      })
+      .lean()
+      .exec();
+  }
   
 }

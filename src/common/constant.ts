@@ -17,6 +17,7 @@ export const APP_CONSTANTS = {
   } as const;
   
   export const ErrorMessage: Record<ErrorCode, string> = {
+    [ErrorCode.FORBIDDEN]: "You are not authorized to perform this action.",
     [ErrorCode.CONFLICT]: "An account with this email already exists.",
     [ErrorCode.VALIDATION_ERROR]: "The request data is invalid.",
     [ErrorCode.DEVICE_ID_REQUIRED]: "Device id is required.",
@@ -34,4 +35,5 @@ export const APP_CONSTANTS = {
     [ErrorCode.BALANCE_NOT_SETTLED]: "The balance has not been settled.",
     [ErrorCode.TOO_MANY_ATTEMPTS]: "Too many attempts. Please try again later.",
     [ErrorCode.INTERNAL_SERVER_ERROR]: "Internal server error.",
+    [ErrorCode.BAD_REQUEST]: "The request is invalid.",
   };

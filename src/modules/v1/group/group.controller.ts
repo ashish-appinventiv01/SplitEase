@@ -41,4 +41,47 @@ export class GroupController {
       next(error);
     }
   };
+
+  public getGroupDetails = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const result = await this.groupService.getGroupDetails(
+        req.params.groupId as string,
+        req.user!.userId
+      );
+  
+      ApiResponse.success(
+        res,
+        "Group details fetched successfully",
+        result
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public addMember = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const result = await this.groupService.addMember(
+        req.params.groupId as string,
+        req.user!.userId,
+        req.body.userId
+      );
+  
+      ApiResponse.success(
+        res,
+        "Member added successfully",
+        result
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
 }
