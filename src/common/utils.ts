@@ -17,7 +17,9 @@ export class CommonUtils {
     }
 
     public static paiseToRupees(amount: number): number {
-        requireInt(amount, 0, "Amount must be a non-negative integer in paise");
+        if (!Number.isSafeInteger(amount)) {
+            throw new Error("Amount must be a safe integer in paise");
+        }
         return amount / 100;
     }
 

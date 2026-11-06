@@ -46,4 +46,8 @@ export class DatabaseProvider {
 
     return states[mongoose.connection.readyState] ?? "unknown";
   }
+
+  public isConnected(): boolean {
+    return mongoose.connection.readyState === 1;
+  }
 }

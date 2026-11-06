@@ -20,7 +20,18 @@ const deviceHeadersSchema = z.object({
 });
 
 export class HeaderValidator {
+  private static readonly SKIP_PREFIXES = ["/health", "/api-docs"];
+
   public validate(req: Request, _res: Response, next: NextFunction): void {
+    if (
+      HeaderValidator.SKIP_PREFIXES.some(
+        (prefix) => req.path === prefix || req.path.startsWith(`${prefix}/`)
+      )
+    ) {
+      next();
+      return;
+    }
+
     const result = deviceHeadersSchema.safeParse({
       device_id: req.headers.device_id,
       device_type: req.headers.device_type,
@@ -29,7 +40,7 @@ export class HeaderValidator {
     });
 
     if (!result.success) {
-      const message = result.error.issues[0].message;
+      const message = result.error.issues[0]?.message ?? "Invalid headers";
       return next(new AppError(message, 400, ErrorCode.VALIDATION_ERROR));
     }
 

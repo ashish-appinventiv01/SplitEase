@@ -17,6 +17,23 @@ export enum DeviceType {
     DONE = "DONE",
     FAILED = "FAILED"
   }
+
+  export enum ActivityType {
+    GROUP_CREATED = "GROUP_CREATED",
+    GROUP_UPDATED = "GROUP_UPDATED",
+    GROUP_DELETED = "GROUP_DELETED",
+    MEMBER_ADDED = "MEMBER_ADDED",
+    MEMBER_REMOVED = "MEMBER_REMOVED",
+    EXPENSE_CREATED = "EXPENSE_CREATED",
+    EXPENSE_UPDATED = "EXPENSE_UPDATED",
+    EXPENSE_DELETED = "EXPENSE_DELETED",
+    SETTLEMENT_CREATED = "SETTLEMENT_CREATED",
+  }
+
+  export enum ExportType {
+    EXPENSES = "EXPENSES",
+    SETTLEMENTS = "SETTLEMENTS",
+  }
   
   export enum Environment {
     DEVELOPMENT = "development",

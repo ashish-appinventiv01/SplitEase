@@ -4,3 +4,5 @@ dist
 .git
 .DS_Store
 coverage
+exports
+*.log
